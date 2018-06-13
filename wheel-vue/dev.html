@@ -21,6 +21,13 @@
 
     <div id="app">
         <p sd-text="msg"></p>
+        <p sd-show="show">hehe</p>
+
+        <ul>
+            <li sd-each="todos">
+                <span sd-text="todo.title"></span>
+            </li>
+        </ul>
     </div>
     <script>
 
@@ -51,6 +58,15 @@
 
         var data = {
             msg: 'hello!',
+            show: true,
+            todos: [
+                {
+                    text: 'hello1'
+                },
+                {
+                    text: 'hello2'
+                }
+            ]
         }
 
         var app = Seed.bootstrap({

@@ -1,12 +1,10 @@
-var config = require("./config");
-var Directive = require("./directive");
-
-var crtlAttr, eachAttr;
+var config = require('./config');
+var Directive = require('./directive');
 
 function Seed(el, data, options) {
-  console.log("seed");
+  console.log('seed');
 
-  if (typeof el === "string") {
+  if (typeof el === 'string') {
     el = document.querySelector(el);
   }
 
@@ -32,25 +30,34 @@ function Seed(el, data, options) {
   }
 }
 
+/**
+ * 将dom属性上面，sd-*的属性编译成directive
+ * @param {String| DOM} node
+ * @param {Boolean} root
+ */
 Seed.prototype._compileNode = function(node, root) {
   var self = this;
 
   var attributes = node.attributes;
 
+  // 先渲染自身一层
   if (attributes && attributes.length > 0) {
+    // 转换attribute
     [].map
       .call(attributes, function(attr) {
         return {
           name: attr.name,
-          value: attr.value
+          value: attr.value,
         };
       })
-      .forEach(function(attr) {
-        console.log(attr);
 
+      // 遍历attribute，将attr转换为directive
+      .forEach(function(attr) {
         if (!attr.name.match(config.prefix)) return null;
 
         var directive = new Directive(attr, node);
+
+        node.removeAttribute(attr.name);
 
         if (directive) {
           self._bind(directive);
@@ -58,13 +65,20 @@ Seed.prototype._compileNode = function(node, root) {
       });
   }
 
-  // if (node.) {
-    
-  // }
+  // 查找子元素是否存在
+  if (node.childNodes && node.childNodes.length > 0) {
+    [].forEach.call(node.childNodes, function(node) {
+      self._compileNode(node);
+    });
+  }
 
-  console.log("compile node");
+  console.log('compile node');
 };
 
+/**
+ * 指定directive与scope数据的关联关系
+ * @param {Directive} directive
+ */
 Seed.prototype._bind = function(directive) {
   var key = directive.key;
 
@@ -74,10 +88,14 @@ Seed.prototype._bind = function(directive) {
   binding.deps.push(directive);
 };
 
+/**
+ * 创建bind对象
+ * @param {String} key
+ */
 Seed.prototype._createBinding = function(key) {
   var binding = {
     deps: [],
-    value: this.scope[key]
+    value: this.scope[key],
   };
 
   Object.defineProperty(this.scope, key, {
@@ -90,12 +108,16 @@ Seed.prototype._createBinding = function(key) {
       binding.deps.forEach(function(dep) {
         dep.update(newVal);
       });
-    }
+    },
   });
 
   return binding;
 };
 
+/**
+ * vue 启动程序
+ * @param {Object} opts
+ */
 Seed.bootstrap = function(opts) {
   return new Seed(opts.el, opts.data);
 };
