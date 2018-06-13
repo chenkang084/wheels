@@ -1,10 +1,5 @@
-var config = require("./config");
-
-var bind = {
-  text: function(value) {
-    this.el.textContent = value || "";
-  }
-};
+var config = require('./config');
+var Directives = require('./directives');
 
 function Directive(attr, el) {
   var type = attr.name.slice(config.prefix.length + 1);
@@ -12,7 +7,7 @@ function Directive(attr, el) {
   this.el = el;
   this.key = attr.value.trim();
 
-  this.update = bind[type];
+  this.update = Directives[type];
 }
 
 module.exports = Directive;

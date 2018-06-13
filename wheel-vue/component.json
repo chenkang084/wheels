@@ -9,6 +9,7 @@
     "src/main.js",
     "src/seed.js",
     "src/directive.js",
+    "src/directives.js",
     "src/config.js"
   ]
 }
