@@ -1,10 +1,10 @@
-var config = require('./config');
-var Directive = require('./directive');
+var config = require("./config");
+var Directive = require("./directive");
 
 function Seed(el, data, options) {
-  console.log('seed');
+  console.log("seed");
 
-  if (typeof el === 'string') {
+  if (typeof el === "string") {
     el = document.querySelector(el);
   }
 
@@ -47,7 +47,7 @@ Seed.prototype._compileNode = function(node, root) {
       .call(attributes, function(attr) {
         return {
           name: attr.name,
-          value: attr.value,
+          value: attr.value
         };
       })
 
@@ -57,7 +57,10 @@ Seed.prototype._compileNode = function(node, root) {
 
         var directive = new Directive(attr, node);
 
-        node.removeAttribute(attr.name);
+        // node.removeAttribute(attr.name);
+        // if (directive.bind) {
+        //   directive.bind(attr, node);
+        // }
 
         if (directive) {
           self._bind(directive);
@@ -72,7 +75,7 @@ Seed.prototype._compileNode = function(node, root) {
     });
   }
 
-  console.log('compile node');
+  console.log("compile node");
 };
 
 /**
@@ -95,7 +98,7 @@ Seed.prototype._bind = function(directive) {
 Seed.prototype._createBinding = function(key) {
   var binding = {
     deps: [],
-    value: this.scope[key],
+    value: this.scope[key]
   };
 
   Object.defineProperty(this.scope, key, {
@@ -106,9 +109,9 @@ Seed.prototype._createBinding = function(key) {
       binding.value = newVal;
 
       binding.deps.forEach(function(dep) {
-        dep.update(newVal);
+        dep._update(newVal);
       });
-    },
+    }
   });
 
   return binding;
