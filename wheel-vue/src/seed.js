@@ -55,15 +55,10 @@ Seed.prototype._compileNode = function(node, root) {
       .forEach(function(attr) {
         if (!attr.name.match(config.prefix)) return null;
 
-        var directive = new Directive(attr, node);
-
-        // node.removeAttribute(attr.name);
-        // if (directive.bind) {
-        //   directive.bind(attr, node);
-        // }
+        var directive = Directive.parse(attr.name, attr.value);
 
         if (directive) {
-          self._bind(directive);
+          self._bind(node, directive);
         }
       });
   }
@@ -82,8 +77,9 @@ Seed.prototype._compileNode = function(node, root) {
  * 指定directive与scope数据的关联关系
  * @param {Directive} directive
  */
-Seed.prototype._bind = function(directive) {
+Seed.prototype._bind = function(node, directive) {
   var key = directive.key;
+  directive.el = node;
 
   var binding = (this._bindings[key] =
     this._bindings[key] || this._createBinding(key));
@@ -109,7 +105,7 @@ Seed.prototype._createBinding = function(key) {
       binding.value = newVal;
 
       binding.deps.forEach(function(dep) {
-        dep._update(newVal);
+        dep.update(newVal);
       });
     }
   });
